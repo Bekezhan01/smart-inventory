@@ -1,9 +1,15 @@
 require('dotenv').config();
 const app = require('./app');
 
+// 👇 МЫНАНЫ ҚОС
+const authRoutes = require('./routes/auth.routes');
+
 const PORT = process.env.PORT || 4000;
 
-// 👉 ROUTES алдымен
+// 👇 ROUTES ҚОСУ (ЕҢ МАҢЫЗДЫ)
+app.use('/api/auth', authRoutes);
+
+// Test route
 app.get("/", (req, res) => {
   res.send("Smart Inventory API is running 🚀");
 });
