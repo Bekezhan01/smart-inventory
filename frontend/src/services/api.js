@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://smart-inventory-backend-a1yi.onrender.com',
+  baseURL: "https://smart-inventory-backend-a1yi.onrender.com",
   timeout: 15000,
 });
 
