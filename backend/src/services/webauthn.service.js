@@ -66,7 +66,7 @@ const startRegistration = async (userId, req) => {
   const options = await generateRegistrationOptions({
     rpName: RP_NAME,
     rpID,
-    userID: Buffer.from(userId),
+    userID: userId,
     userName: user.email,
     userDisplayName: user.name,
     attestationType: 'none',
@@ -117,15 +117,22 @@ const completeRegistration = async (userId, response, credentialName, req) => {
     throw Object.assign(new Error('Верификация не пройдена'), { status: 400 });
   }
 
-  const { credential, credentialDeviceType, credentialBackedUp, aaguid } = verification.registrationInfo;
+  const {
+    credentialID,
+    credentialPublicKey,
+    counter,
+    credentialDeviceType,
+    credentialBackedUp,
+    aaguid,
+  } = verification.registrationInfo;
 
   // Save credential
   const saved = await prisma.webAuthnCredential.create({
     data: {
       userId,
-      credentialId: Buffer.from(credential.id).toString('base64url'),
-      publicKey:    Buffer.from(credential.publicKey).toString('base64'),
-      counter:      BigInt(credential.counter),
+      credentialId: Buffer.from(credentialID).toString('base64url'),
+      publicKey:    Buffer.from(credentialPublicKey).toString('base64'),
+      counter:      BigInt(counter),
       deviceType:   credentialDeviceType,
       backedUp:     credentialBackedUp,
       transports:   response.response.transports || [],
@@ -216,11 +223,11 @@ const completeAuthentication = async (email, response, req) => {
       expectedChallenge: challengeRecord.challenge,
       expectedOrigin:    origin,
       expectedRPID:      rpID,
-      credential: {
-        id:         Buffer.from(storedCred.credentialId, 'base64url'),
-        publicKey:  Buffer.from(storedCred.publicKey, 'base64'),
-        counter:    Number(storedCred.counter),
-        transports: storedCred.transports,
+      authenticator: {
+        credentialID:        Buffer.from(storedCred.credentialId, 'base64url'),
+        credentialPublicKey: Buffer.from(storedCred.publicKey, 'base64'),
+        counter:             Number(storedCred.counter),
+        transports:          storedCred.transports,
       },
       requireUserVerification: true,
     });
