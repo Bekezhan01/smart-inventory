@@ -61,7 +61,7 @@ export default function OperatorDashboard() {
         <StatCard title={t.inventory.outOfStock}     value={summary?.outOfStock || 0}     icon={AlertTriangle}  color="red"    />
         <StatCard
           title={t.inventory.totalValue}
-          value={`${(summary?.totalValue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`}
+          value={`${(summary?.totalValue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₸`}
           color="green"
         />
       </div>

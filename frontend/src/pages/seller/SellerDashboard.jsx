@@ -58,13 +58,13 @@ export default function SellerDashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         <StatCard
           title={t.dashboard.todayRevenue}
-          value={`${(summary?.todayRevenue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`}
+          value={`${(summary?.todayRevenue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₸`}
           icon={DollarSign} color="green"
         />
         <StatCard title={t.dashboard.todaySales}  value={summary?.todaySales  || 0} icon={ShoppingCart} color="accent" />
         <StatCard
           title={t.dashboard.monthRevenue}
-          value={`${(summary?.monthRevenue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`}
+          value={`${(summary?.monthRevenue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₸`}
           icon={TrendingUp} color="blue"
         />
         <StatCard title={t.dashboard.monthSales} value={summary?.monthSales || 0} icon={BarChart3} color="amber" />
@@ -115,7 +115,7 @@ export default function SellerDashboard() {
                     {PAY_LABEL[s.paymentMethod] || s.paymentMethod}
                   </Badge>
                   <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--green)', fontSize: '0.9rem' }}>
-                    {Number(s.totalAmount).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
+                    {Number(s.totalAmount).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₸
                   </span>
                 </div>
               </div>

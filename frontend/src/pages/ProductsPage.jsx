@@ -158,7 +158,7 @@ export default function ProductsPage() {
                   <Td><Badge>{p.category?.name || '—'}</Badge></Td>
                   <Td>
                     <span style={{ fontFamily: 'var(--font-mono)' }}>
-                      {Number(p.price).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽
+                      {Number(p.price).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₸
                     </span>
                   </Td>
                   <Td>

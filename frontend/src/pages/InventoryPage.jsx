@@ -98,7 +98,7 @@ export default function InventoryPage() {
           <StatCard title={t.inventory.outOfStock}     value={summary.outOfStock}    icon={AlertTriangle} color="red"    />
           <StatCard
             title={t.inventory.totalValue}
-            value={`${summary.totalValue.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`}
+            value={`${summary.totalValue.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₸`}
             color="green"
           />
         </div>

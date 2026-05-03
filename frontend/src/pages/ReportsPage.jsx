@@ -94,7 +94,7 @@ export default function ReportsPage() {
                 <Tooltip
                   {...tooltipStyle}
                   formatter={(v) => [
-                    `${Number(v).toLocaleString('ru-RU')} ₽`,
+                    `${Number(v).toLocaleString('ru-RU')} ₸`,
                     t.reports.valueTooltip,
                   ]}
                 />

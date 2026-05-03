@@ -76,7 +76,7 @@ export default function DashboardPage() {
         marginBottom: '1.5rem',
       }}>
         <StatCard title={t.dashboard.totalProducts}  value={stats?.totalProducts || 0}  icon={Package}       color="accent" />
-        <StatCard title={t.dashboard.inventoryValue} value={`${(stats?.totalInventoryValue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`} icon={DollarSign} color="green" />
+        <StatCard title={t.dashboard.inventoryValue} value={`${(stats?.totalInventoryValue || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₸`} icon={DollarSign} color="green" />
         <StatCard title={t.dashboard.lowStock}       value={stats?.lowStock || 0}        icon={AlertTriangle} color="amber" />
         <StatCard title={t.dashboard.outOfStock}     value={stats?.outOfStock || 0}      icon={Warehouse}     color="red"   />
         <StatCard title={t.dashboard.weeklyIn}       value={stats?.weeklyIn || 0}        icon={TrendingUp}    color="blue"  />

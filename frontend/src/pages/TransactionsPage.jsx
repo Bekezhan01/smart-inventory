@@ -156,7 +156,7 @@ export default function TransactionsPage() {
                     <Td>
                       {tx.unitPrice
                         ? <span style={{ fontFamily: 'var(--font-mono)' }}>
-                            {Number(tx.unitPrice).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽
+                            {Number(tx.unitPrice).toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₸
                           </span>
                         : '—'
                       }

@@ -133,7 +133,7 @@ export default function POSPage() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--accent-2)', fontSize: '0.95rem' }}>
-                      {Number(p.price).toLocaleString('ru-RU')} ₽
+                      {Number(p.price).toLocaleString('ru-RU')} ₸
                     </span>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
                       {p.inventory?.quantity} шт.
@@ -214,7 +214,7 @@ export default function POSPage() {
                           }}><Plus size={12} /></button>
                         </div>
                         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text)' }}>
-                          {(item.price * item.qty).toLocaleString('ru-RU')} ₽
+                          {(item.price * item.qty).toLocaleString('ru-RU')} ₸
                         </span>
                       </div>
                     </div>
@@ -224,7 +224,7 @@ export default function POSPage() {
                 {/* Discount */}
                 <div style={{ marginBottom: '0.75rem' }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '5px' }}>
-                    {t.pos.discount} (₽)
+                    {t.pos.discount} (₸)
                   </label>
                   <input type="number" min="0" max={cartSubtotal} value={discount}
                     onChange={(e) => setDiscount(e.target.value)}
@@ -267,19 +267,19 @@ export default function POSPage() {
                   {Number(discount) > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-3)', marginBottom: '4px' }}>
                       <span>Подытог:</span>
-                      <span style={{ fontFamily: 'var(--font-mono)' }}>{cartSubtotal.toLocaleString('ru-RU')} ₽</span>
+                      <span style={{ fontFamily: 'var(--font-mono)' }}>{cartSubtotal.toLocaleString('ru-RU')} ₸</span>
                     </div>
                   )}
                   {Number(discount) > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--red)', marginBottom: '4px' }}>
                       <span>Скидка:</span>
-                      <span style={{ fontFamily: 'var(--font-mono)' }}>-{Number(discount).toLocaleString('ru-RU')} ₽</span>
+                      <span style={{ fontFamily: 'var(--font-mono)' }}>-{Number(discount).toLocaleString('ru-RU')} ₸</span>
                     </div>
                   )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t.pos.totalAmount}:</span>
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--green)' }}>
-                      {cartTotal.toLocaleString('ru-RU')} ₽
+                      {cartTotal.toLocaleString('ru-RU')} ₸
                     </span>
                   </div>
                 </div>
