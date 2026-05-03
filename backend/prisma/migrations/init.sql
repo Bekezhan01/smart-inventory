@@ -73,3 +73,12 @@ ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("c
 ALTER TABLE "inventory" ADD CONSTRAINT "inventory_productId_fkey" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_productId_fkey" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+INSERT INTO "users" ("id", "name", "email", "password", "role")
+VALUES (
+  gen_random_uuid(),
+  'Admin',
+  'admin@stockos.com',
+  '$2a$10$7QJ8z9WqQZr6V2dQ9zQ8X.6VYkZQ5Wwz8lZz2j3vZk9Q2Q1Q0Q0Q0', -- пароль: admin123
+  'ADMIN'
+);
