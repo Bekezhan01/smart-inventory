@@ -18,6 +18,7 @@ import InventoryPage   from './pages/InventoryPage';
 import TransactionsPage from './pages/TransactionsPage';
 import ReportsPage     from './pages/ReportsPage';
 import UsersPage       from './pages/admin/UsersPage';
+import SecurityPage    from './pages/admin/SecurityPage';
 
 // Operator pages
 import OperatorDashboard from './pages/operator/OperatorDashboard';
@@ -79,6 +80,7 @@ export default function App() {
           <Route path="transactions" element={<TransactionsPage />} />
           <Route path="reports"      element={<ReportsPage />} />
           <Route path="users"        element={<UsersPage />} />
+          <Route path="security"     element={<SecurityPage />} />
         </Route>
 
         {/* ── Operator routes ───────────────────────────────────────────── */}

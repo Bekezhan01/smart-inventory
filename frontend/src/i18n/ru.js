@@ -2,7 +2,7 @@ export const ru = {
   nav: {
     dashboard: 'Панель управления', products: 'Товары', inventory: 'Склад',
     transactions: 'Операции', reports: 'Отчёты', sales: 'Продажи',
-    pos: 'Касса', users: 'Пользователи', logout: 'Выйти', settings: 'Настройки',
+    pos: 'Касса', users: 'Пользователи', security: 'Контроль доступа', logout: 'Выйти', settings: 'Настройки',
   },
   roles: { ADMIN: 'Администратор', OPERATOR: 'Оператор', SELLER: 'Продавец' },
   auth: {

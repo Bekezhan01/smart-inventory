@@ -15,6 +15,7 @@ const NAV = [
   { to: '/transactions', icon: ArrowLeftRight,   label: t.nav.transactions },
   { to: '/reports',      icon: BarChart3,        label: t.nav.reports      },
   { to: '/users',        icon: Users,            label: t.nav.users        },
+  { to: '/security',     icon: ShieldCheck,      label: t.nav.security     },
 ];
 
 export default function AdminLayout() {

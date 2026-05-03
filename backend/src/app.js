@@ -13,7 +13,9 @@ const transactionRoutes = require('./routes/transaction.routes');
 const reportRoutes      = require('./routes/report.routes');
 const categoryRoutes    = require('./routes/category.routes');
 const saleRoutes        = require('./routes/sale.routes');
+const securityRoutes    = require('./routes/security.routes');
 const { errorHandler, notFound } = require('./middleware/error.middleware');
+const { auditMutations } = require('./services/audit.service');
 
 const app = express();
 
@@ -36,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
 
 app.get('/health', (req, res) => res.json({ status: 'ok', version: '2.0', timestamp: new Date().toISOString() }));
+app.use(auditMutations);
 app.use('/api/auth',         authLimiter, authRoutes);
 app.use('/api/products',     apiLimiter,  productRoutes);
 app.use('/api/inventory',    apiLimiter,  inventoryRoutes);
@@ -43,6 +46,7 @@ app.use('/api/transactions', apiLimiter,  transactionRoutes);
 app.use('/api/reports',      apiLimiter,  reportRoutes);
 app.use('/api/categories',   apiLimiter,  categoryRoutes);
 app.use('/api/sales',        apiLimiter,  saleRoutes);
+app.use('/api/security',     apiLimiter,  securityRoutes);
 
 const frontendIndex = path.join(__dirname, '..', 'public', 'index.html');
 if (fs.existsSync(frontendIndex)) {

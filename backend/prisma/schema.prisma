@@ -35,6 +35,7 @@ model User {
   webAuthnCredentials WebAuthnCredential[]
   transactions        Transaction[]
   sales               Sale[]
+  auditEvents         AuditEvent[]
 
   @@map("users")
 }
@@ -66,6 +67,29 @@ model WebAuthnChallenge {
   createdAt DateTime @default(now())
 
   @@map("webauthn_challenges")
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  actorEmail String?
+  role       String?
+  action     String
+  resource   String
+  method     String
+  path       String
+  status     String
+  statusCode Int
+  ip         String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([status])
+  @@map("audit_events")
 }
 
 model Category {
