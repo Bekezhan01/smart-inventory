@@ -115,49 +115,48 @@ Open **http://localhost:3000** and log in with:
 
 ---
 
-## ☁️ Deploy to Koyeb
+## ☁️ Free Deploy: Render + Aiven
 
-This project can run on Koyeb as:
-- one Koyeb PostgreSQL Database Service
-- one Koyeb Web Service using `Dockerfile.koyeb`
+This project can run for free as:
+- one Aiven Free PostgreSQL service
+- one Render Free Web Service using `Dockerfile.koyeb`
 
 The web service serves both the React frontend and the Express API from the same public domain. API routes stay under `/api`, while all other routes return the React app.
 
 ### 1. Create PostgreSQL
 
-In Koyeb, create a free PostgreSQL Database Service and copy its connection string.
+Create an Aiven Free PostgreSQL service and copy its connection string.
+
+Aiven free PostgreSQL does not require a credit card, has no fixed 30-day expiry, and includes 1 GB disk storage.
 
 ### 2. Create Web Service
 
-Create a Web Service from the GitHub repository:
+Create a Render Blueprint from this GitHub repository. Render will read `render.yaml`.
 
 ```text
 Repository: Bekezhan01/smart-inventory
 Branch: main
-Builder: Dockerfile
-Dockerfile path: Dockerfile.koyeb
-Port: 4000
+Blueprint file: render.yaml
+Runtime: Docker
+Plan: Free
 ```
 
 ### 3. Environment variables
 
-Set these variables on the Koyeb Web Service:
+Render will ask for the variables marked `sync: false` in `render.yaml`. Set them like this:
 
 ```env
-DATABASE_URL=<Koyeb PostgreSQL connection string>
-JWT_SECRET=<long-random-secret>
-JWT_EXPIRES_IN=7d
-NODE_ENV=production
-PORT=4000
-FRONTEND_URL=https://<your-koyeb-public-domain>
-WEBAUTHN_RP_NAME=StockOS
-WEBAUTHN_RP_ID=<your-koyeb-public-domain-without-https>
-WEBAUTHN_ORIGIN=https://<your-koyeb-public-domain>
+DATABASE_URL=<Aiven PostgreSQL connection string>
+FRONTEND_URL=https://<your-render-domain>
+WEBAUTHN_RP_ID=<your-render-domain-without-https>
+WEBAUTHN_ORIGIN=https://<your-render-domain>
 ```
 
 Do not set `VITE_API_URL` for this single-service deployment. The frontend uses `/api` by default.
 
 On every production start, `npm start` runs Prisma migrations and the idempotent seed before starting the API.
+
+Render Free Web Services spin down after inactivity and wake on the next request. First request after sleep can take about a minute.
 
 ---
 

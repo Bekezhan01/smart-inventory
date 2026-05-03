@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: smart-inventory
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.koyeb
+    dockerContext: .
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: FRONTEND_URL
+        sync: false
+      - key: WEBAUTHN_RP_NAME
+        value: StockOS
+      - key: WEBAUTHN_RP_ID
+        sync: false
+      - key: WEBAUTHN_ORIGIN
+        sync: false
