@@ -76,20 +76,23 @@ async function main() {
   }
 
   // ── Sample transactions ───────────────────────────────────────────────────
-  const products = await prisma.product.findMany({ take: 5 });
-  for (let i = 0; i < 15; i++) {
-    const product = products[i % products.length];
-    const inv     = await prisma.inventory.findUnique({ where: { productId: product.id } });
-    const type    = i % 3 === 0 ? 'IN' : 'OUT';
-    const qty     = Math.floor(Math.random() * 8) + 1;
-    if (type === 'OUT' && inv.quantity < qty) continue;
-    await prisma.transaction.create({
-      data: {
-        productId: product.id, type, quantity: qty, userId: operator.id,
-        note: `Тестовая операция ${i + 1}`,
-        createdAt: new Date(Date.now() - Math.random() * 30 * 86400000),
-      },
-    });
+  const existingTransactions = await prisma.transaction.count();
+  if (existingTransactions === 0) {
+    const products = await prisma.product.findMany({ take: 5 });
+    for (let i = 0; i < 15; i++) {
+      const product = products[i % products.length];
+      const inv     = await prisma.inventory.findUnique({ where: { productId: product.id } });
+      const type    = i % 3 === 0 ? 'IN' : 'OUT';
+      const qty     = Math.floor(Math.random() * 8) + 1;
+      if (type === 'OUT' && inv.quantity < qty) continue;
+      await prisma.transaction.create({
+        data: {
+          productId: product.id, type, quantity: qty, userId: operator.id,
+          note: `Тестовая операция ${i + 1}`,
+          createdAt: new Date(Date.now() - Math.random() * 30 * 86400000),
+        },
+      });
+    }
   }
 
   console.log('✅ База данных готова!');

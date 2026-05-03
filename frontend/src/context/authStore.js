@@ -15,7 +15,7 @@ const useAuthStore = create((set, get) => ({
   login: async (email, password) => {
     set({ loading: true, error: null });
     try {
-      const res = await api.post('/api/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       const { user, token } = res.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -32,7 +32,7 @@ const useAuthStore = create((set, get) => ({
   loginWithPin: async (email, pin) => {
     set({ loading: true, error: null });
     try {
-      const res = await api.post('/api/auth/login/pin', { email, pin });
+      const res = await api.post('/auth/login/pin', { email, pin });
       const { user, token } = res.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -50,14 +50,14 @@ const useAuthStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       // 1. Get challenge from server
-      const challengeRes = await api.post('/api/auth/webauthn/auth/start', { email });
+      const challengeRes = await api.post('/auth/webauthn/auth/start', { email });
       const options = challengeRes.data;
 
       // 2. Trigger browser biometric prompt
       const authResponse = await startAuthentication(options);
 
       // 3. Verify with server
-      const verifyRes = await api.post('/api/auth/webauthn/auth/finish', { email, response: authResponse,});
+      const verifyRes = await api.post('/auth/webauthn/auth/finish', { email, response: authResponse,});
 
       const { user, token } = verifyRes.data;
       localStorage.setItem('token', token);
@@ -79,9 +79,9 @@ const useAuthStore = create((set, get) => ({
   registerFaceId: async (credentialName) => {
     set({ loading: true, error: null });
     try {
-      const optRes = await api.post('/api/auth/webauthn/register/start');
+      const optRes = await api.post('/auth/webauthn/register/start');
       const registrationResponse = await startRegistration(optRes.data);
-      const result = await api.post('/api/auth/webauthn/register/finish', {
+      const result = await api.post('/auth/webauthn/register/finish', {
       response: registrationResponse,
       name: credentialName,
     });

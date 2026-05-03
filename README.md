@@ -18,7 +18,8 @@ smart-inventory/
 │   ├── prisma/
 │   │   ├── schema.prisma       # Database schema
 │   │   └── migrations/
-│   │       └── init.sql
+│   │       └── 20260503120000_init/
+│   │           └── migration.sql
 │   └── src/
 │       ├── server.js           # Entry point
 │       ├── app.js              # Express setup
@@ -108,8 +109,55 @@ The backend will automatically:
 - Seed demo data (products, users, transactions)
 
 Open **http://localhost:3000** and log in with:
-- `admin@inventory.com` / `admin123`
-- `manager@inventory.com` / `manager123`
+- `admin@stockos.com` / `admin123`
+- `operator@stockos.com` / `operator123`
+- `seller@stockos.com` / PIN `1234`
+
+---
+
+## ☁️ Deploy to Koyeb
+
+This project can run on Koyeb as:
+- one Koyeb PostgreSQL Database Service
+- one Koyeb Web Service using `Dockerfile.koyeb`
+
+The web service serves both the React frontend and the Express API from the same public domain. API routes stay under `/api`, while all other routes return the React app.
+
+### 1. Create PostgreSQL
+
+In Koyeb, create a free PostgreSQL Database Service and copy its connection string.
+
+### 2. Create Web Service
+
+Create a Web Service from the GitHub repository:
+
+```text
+Repository: Bekezhan01/smart-inventory
+Branch: main
+Builder: Dockerfile
+Dockerfile path: Dockerfile.koyeb
+Port: 4000
+```
+
+### 3. Environment variables
+
+Set these variables on the Koyeb Web Service:
+
+```env
+DATABASE_URL=<Koyeb PostgreSQL connection string>
+JWT_SECRET=<long-random-secret>
+JWT_EXPIRES_IN=7d
+NODE_ENV=production
+PORT=4000
+FRONTEND_URL=https://<your-koyeb-public-domain>
+WEBAUTHN_RP_NAME=StockOS
+WEBAUTHN_RP_ID=<your-koyeb-public-domain-without-https>
+WEBAUTHN_ORIGIN=https://<your-koyeb-public-domain>
+```
+
+Do not set `VITE_API_URL` for this single-service deployment. The frontend uses `/api` by default.
+
+On every production start, `npm start` runs Prisma migrations and the idempotent seed before starting the API.
 
 ---
 
@@ -192,8 +240,8 @@ Authorization: Bearer <jwt_token>
 |--------|----------|-------------|
 | GET | `/api/products` | List all (search, page, limit, categoryId) |
 | GET | `/api/products/:id` | Get one |
-| POST | `/api/products` | Create (ADMIN/MANAGER) |
-| PUT | `/api/products/:id` | Update (ADMIN/MANAGER) |
+| POST | `/api/products` | Create (ADMIN/OPERATOR) |
+| PUT | `/api/products/:id` | Update (ADMIN/OPERATOR) |
 | DELETE | `/api/products/:id` | Delete (ADMIN only) |
 
 ### Inventory
@@ -252,8 +300,8 @@ The `/api/reports/forecast` endpoint uses a **moving average algorithm**:
 | Role | Permissions |
 |------|-------------|
 | ADMIN | Full access: create, edit, delete products, manage users |
-| MANAGER | Create/edit products, record transactions, view reports |
-| STAFF | View products, inventory, record transactions |
+| OPERATOR | Create/edit products, manage inventory, record transactions, view reports |
+| SELLER | Use POS, create sales, view own sales/settings |
 
 ---
 
@@ -271,6 +319,22 @@ NODE_ENV=development
 ### Frontend `.env`
 ```env
 VITE_API_URL=http://localhost:4000/api
+```
+
+### Production startup
+
+For production backend deployments use the default start command:
+
+```bash
+npm start
+```
+
+This applies Prisma migrations and runs the idempotent seed before starting the API, so a reinitialized database gets the required roles, users, categories, products, inventory records, and demo transactions.
+
+If the frontend is deployed separately from the backend, set:
+
+```env
+VITE_API_URL=https://your-backend-host/api
 ```
 
 ---
@@ -302,8 +366,8 @@ docker-compose ps
 **Prisma schema out of sync**
 ```bash
 cd backend
-npm run db:push    # sync schema
-npm run db:seed    # re-seed data
+npm run db:deploy  # apply production migrations
+npm run db:seed    # restore required bootstrap data
 ```
 
 **Port already in use**

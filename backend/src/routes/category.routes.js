@@ -9,12 +9,12 @@ router.use(authenticate);
 
 router.get('/', controller.getAll);
 
-router.post('/', authorize('ADMIN', 'MANAGER'), [
+router.post('/', authorize('ADMIN', 'OPERATOR'), [
   body('name').trim().notEmpty().withMessage('Name required'),
   validate,
 ], controller.create);
 
-router.put('/:id', authorize('ADMIN', 'MANAGER'), [
+router.put('/:id', authorize('ADMIN', 'OPERATOR'), [
   body('name').trim().notEmpty(),
   validate,
 ], controller.update);

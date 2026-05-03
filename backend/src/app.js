@@ -1,9 +1,10 @@
 const express    = require('express');
-const authRoutes = require('./routes/auth.routes');
 const cors       = require('cors');
 const helmet     = require('helmet');
 const morgan     = require('morgan');
 const rateLimit  = require('express-rate-limit');
+const fs         = require('fs');
+const path       = require('path');
 
 const authRoutes        = require('./routes/auth.routes');
 const productRoutes     = require('./routes/product.routes');
@@ -47,6 +48,15 @@ app.use('/api/transactions', apiLimiter,  transactionRoutes);
 app.use('/api/reports',      apiLimiter,  reportRoutes);
 app.use('/api/categories',   apiLimiter,  categoryRoutes);
 app.use('/api/sales',        apiLimiter,  saleRoutes);
+
+const frontendIndex = path.join(__dirname, '..', 'public', 'index.html');
+if (fs.existsSync(frontendIndex)) {
+  app.use(express.static(path.dirname(frontendIndex)));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    return res.sendFile(frontendIndex);
+  });
+}
 
 app.use(notFound);
 app.use(errorHandler);

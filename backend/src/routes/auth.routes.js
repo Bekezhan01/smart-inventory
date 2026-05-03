@@ -29,7 +29,7 @@ router.post('/webauthn/auth/finish', [
 ], controller.webAuthnAuthFinish);
 
 // ── Admin: register new users ─────────────────────────────────────────────────
-router.post('/register', [
+router.post('/register', authenticate, authorize('ADMIN'), [
   body('name').trim().notEmpty(),
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 }),

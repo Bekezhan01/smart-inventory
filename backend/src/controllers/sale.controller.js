@@ -21,6 +21,9 @@ const getSales = async (req, res, next) => {
 const getSaleById = async (req, res, next) => {
   try {
     const sale = await saleService.getSaleById(req.params.id);
+    if (req.user.role === 'SELLER' && sale.sellerId !== req.user.id) {
+      return res.status(403).json({ error: 'Недостаточно прав' });
+    }
     res.json({ sale });
   } catch (err) { next(err); }
 };

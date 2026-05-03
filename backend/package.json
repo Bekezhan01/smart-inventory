@@ -4,9 +4,13 @@
   "description": "Smart Inventory Management System - Backend API with RBAC + WebAuthn",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "npm run start:prod",
+    "start:prod": "npm run bootstrap && node src/server.js",
+    "start:raw": "node src/server.js",
+    "bootstrap": "npm run db:deploy && npm run db:seed",
     "dev": "nodemon src/server.js",
     "db:migrate": "npx prisma migrate dev",
+    "db:deploy": "npx prisma migrate deploy",
     "db:push": "npx prisma db push",
     "db:seed": "node src/utils/seed.js",
     "db:generate": "npx prisma generate",
@@ -24,10 +28,10 @@
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "prisma": "^6.19.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    "prisma": "^6.19.3"
+    "nodemon": "^3.1.0"
   }
 }
