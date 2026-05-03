@@ -34,6 +34,10 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
 
 app.get('/health', (req, res) => res.json({ status: 'ok', version: '2.0', timestamp: new Date().toISOString() }));
+app.get('/', (req, res) => {
+  res.send('Smart Inventory API is running 🚀');
+});
+
 
 app.use('/api/auth',         authLimiter, authRoutes);
 app.use('/api/products',     apiLimiter,  productRoutes);
