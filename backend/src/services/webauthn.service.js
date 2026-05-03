@@ -16,10 +16,29 @@ const {
 const jwt    = require('jsonwebtoken');
 const prisma = require('../config/database');
 
-const RP_NAME  = process.env.WEBAUTHN_RP_NAME  || 'StockOS';
-const RP_ID    = process.env.WEBAUTHN_RP_ID    || 'localhost';
-const ORIGIN   = process.env.WEBAUTHN_ORIGIN   || 'http://localhost:3000';
+const RP_NAME = process.env.WEBAUTHN_RP_NAME || 'StockOS';
 const CHALLENGE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+const getWebAuthnConfig = (req) => {
+  const requestOrigin = req?.get?.('origin');
+  const configuredOrigin = process.env.WEBAUTHN_ORIGIN;
+  const origin = requestOrigin || configuredOrigin || 'http://localhost:3000';
+
+  let rpID;
+  try {
+    rpID = requestOrigin ? new URL(requestOrigin).hostname : undefined;
+  } catch (_) {
+    rpID = undefined;
+  }
+
+  try {
+    rpID = rpID || process.env.WEBAUTHN_RP_ID || new URL(origin).hostname;
+  } catch (_) {
+    rpID = rpID || process.env.WEBAUTHN_RP_ID || 'localhost';
+  }
+
+  return { origin, rpID };
+};
 
 // ── Helper: clean expired challenges ─────────────────────────────────────────
 const cleanExpiredChallenges = async () => {
@@ -28,7 +47,8 @@ const cleanExpiredChallenges = async () => {
 
 // ── REGISTRATION ──────────────────────────────────────────────────────────────
 
-const startRegistration = async (userId) => {
+const startRegistration = async (userId, req) => {
+  const { rpID } = getWebAuthnConfig(req);
   await cleanExpiredChallenges();
 
   const user = await prisma.user.findUnique({
@@ -45,7 +65,7 @@ const startRegistration = async (userId) => {
 
   const options = await generateRegistrationOptions({
     rpName: RP_NAME,
-    rpID:   RP_ID,
+    rpID,
     userID: Buffer.from(userId),
     userName: user.email,
     userDisplayName: user.name,
@@ -72,7 +92,8 @@ const startRegistration = async (userId) => {
   return options;
 };
 
-const completeRegistration = async (userId, response, credentialName) => {
+const completeRegistration = async (userId, response, credentialName, req) => {
+  const { origin, rpID } = getWebAuthnConfig(req);
   const challengeRecord = await prisma.webAuthnChallenge.findFirst({
     where: { userId, type: 'registration', expiresAt: { gt: new Date() } },
     orderBy: { createdAt: 'desc' },
@@ -84,8 +105,8 @@ const completeRegistration = async (userId, response, credentialName) => {
     verification = await verifyRegistrationResponse({
       response,
       expectedChallenge: challengeRecord.challenge,
-      expectedOrigin:    ORIGIN,
-      expectedRPID:      RP_ID,
+      expectedOrigin:    origin,
+      expectedRPID:      rpID,
       requireUserVerification: true,
     });
   } catch (err) {
@@ -127,7 +148,8 @@ const completeRegistration = async (userId, response, credentialName) => {
 
 // ── AUTHENTICATION ────────────────────────────────────────────────────────────
 
-const startAuthentication = async (email) => {
+const startAuthentication = async (email, req) => {
+  const { rpID } = getWebAuthnConfig(req);
   await cleanExpiredChallenges();
 
   const user = await prisma.user.findUnique({
@@ -148,7 +170,7 @@ const startAuthentication = async (email) => {
   }));
 
   const options = await generateAuthenticationOptions({
-    rpID: RP_ID,
+    rpID,
     allowCredentials,
     userVerification: 'required',
     timeout: 60000,
@@ -166,7 +188,8 @@ const startAuthentication = async (email) => {
   return { options, userId: user.id };
 };
 
-const completeAuthentication = async (email, response) => {
+const completeAuthentication = async (email, response, req) => {
+  const { origin, rpID } = getWebAuthnConfig(req);
   const user = await prisma.user.findUnique({
     where: { email },
     include: { webAuthnCredentials: true },
@@ -191,8 +214,8 @@ const completeAuthentication = async (email, response) => {
     verification = await verifyAuthenticationResponse({
       response,
       expectedChallenge: challengeRecord.challenge,
-      expectedOrigin:    ORIGIN,
-      expectedRPID:      RP_ID,
+      expectedOrigin:    origin,
+      expectedRPID:      rpID,
       credential: {
         id:         Buffer.from(storedCred.credentialId, 'base64url'),
         publicKey:  Buffer.from(storedCred.publicKey, 'base64'),

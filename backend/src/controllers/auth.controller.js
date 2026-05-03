@@ -54,7 +54,7 @@ const deleteUser = async (req, res, next) => {
 // ── WebAuthn ─────────────────────────────────────────────────────────────────
 const webAuthnRegisterStart = async (req, res, next) => {
   try {
-    const options = await webAuthnService.startRegistration(req.user.id);
+    const options = await webAuthnService.startRegistration(req.user.id, req);
     res.json(options);
   } catch (err) { next(err); }
 };
@@ -62,7 +62,7 @@ const webAuthnRegisterStart = async (req, res, next) => {
 const webAuthnRegisterFinish = async (req, res, next) => {
   try {
     const { response, name } = req.body;
-    const result = await webAuthnService.completeRegistration(req.user.id, response, name);
+    const result = await webAuthnService.completeRegistration(req.user.id, response, name, req);
     res.json({ message: 'Face ID зарегистрирован', ...result });
   } catch (err) { next(err); }
 };
@@ -70,7 +70,7 @@ const webAuthnRegisterFinish = async (req, res, next) => {
 const webAuthnAuthStart = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const result = await webAuthnService.startAuthentication(email);
+    const result = await webAuthnService.startAuthentication(email, req);
     res.json(result.options);
   } catch (err) { next(err); }
 };
@@ -78,7 +78,7 @@ const webAuthnAuthStart = async (req, res, next) => {
 const webAuthnAuthFinish = async (req, res, next) => {
   try {
     const { email, response } = req.body;
-    const result = await webAuthnService.completeAuthentication(email, response);
+    const result = await webAuthnService.completeAuthentication(email, response, req);
     res.json({ message: 'Вход через Face ID выполнен', ...result });
   } catch (err) { next(err); }
 };
