@@ -2,6 +2,14 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../config/database');
 const auditService = require('../services/audit.service');
 
+const SELLER_ACCESS_START_HOUR = 9;
+const SELLER_ACCESS_END_HOUR = 24;
+
+const isSellerAccessOpen = (date = new Date()) => {
+  const hour = date.getHours();
+  return hour >= SELLER_ACCESS_START_HOUR && hour < SELLER_ACCESS_END_HOUR;
+};
+
 // ── JWT Authentication ────────────────────────────────────────────────────────
 const authenticate = async (req, res, next) => {
   try {
@@ -60,10 +68,45 @@ const authorize = (...roles) => {
   };
 };
 
+const enforceSellerHours = async (req, res, next) => {
+  if (req.user?.role !== 'SELLER') return next();
+  if (isSellerAccessOpen()) return next();
+
+  const error = 'Панель продавца доступна только с 09:00 до 00:00';
+  await auditService.record({
+    req,
+    action: 'seller:off-hours',
+    resource: req.originalUrl.split('/').filter(Boolean)[1] || 'seller',
+    status: 'denied',
+    statusCode: 403,
+    metadata: {
+      availableFrom: '09:00',
+      availableUntil: '00:00',
+      serverHour: new Date().getHours(),
+    },
+  });
+
+  return res.status(403).json({
+    error,
+    code: 'SELLER_OFF_HOURS',
+    availableFrom: '09:00',
+    availableUntil: '00:00',
+  });
+};
+
 // Shorthand helpers
 const adminOnly      = authorize('ADMIN');
 const adminOrOperator = authorize('ADMIN', 'OPERATOR');
 const sellerOnly     = authorize('SELLER');
 const allRoles       = authorize('ADMIN', 'OPERATOR', 'SELLER');
 
-module.exports = { authenticate, authorize, adminOnly, adminOrOperator, sellerOnly, allRoles };
+module.exports = {
+  authenticate,
+  authorize,
+  enforceSellerHours,
+  isSellerAccessOpen,
+  adminOnly,
+  adminOrOperator,
+  sellerOnly,
+  allRoles,
+};

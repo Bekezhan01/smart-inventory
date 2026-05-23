@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { Lock, Moon } from 'lucide-react';
 import useAuthStore from './context/authStore';
 
 // Layouts
@@ -51,6 +52,17 @@ const PublicRoute = ({ children }) => {
   return <Navigate to="/dashboard" replace />;
 };
 
+const isSellerAccessOpen = (date = new Date()) => {
+  const hour = date.getHours();
+  return hour >= 9 && hour < 24;
+};
+
+const RequireSellerHours = ({ children }) => {
+  const { user } = useAuthStore();
+  if (user?.role !== 'SELLER') return children;
+  return isSellerAccessOpen() ? children : <SellerClosedPage />;
+};
+
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
@@ -95,7 +107,7 @@ export default function App() {
 
         {/* ── Seller routes ─────────────────────────────────────────────── */}
         <Route path="/pos" element={
-          <RequireAuth><RequireRole roles={['SELLER']}><SellerLayout /></RequireRole></RequireAuth>
+          <RequireAuth><RequireRole roles={['SELLER']}><RequireSellerHours><SellerLayout /></RequireSellerHours></RequireRole></RequireAuth>
         }>
           <Route index element={<SellerDashboard />} />
           <Route path="sale"     element={<POSPage />} />
@@ -131,6 +143,82 @@ function UnauthorizedPage() {
         padding: '0.6rem 1.4rem', background: 'var(--accent)', color: '#fff',
         border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', fontWeight: 600,
       }}>Выйти</button>
+    </div>
+  );
+}
+
+function SellerClosedPage() {
+  const { logout } = useAuthStore();
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem',
+      background: 'var(--bg)',
+      color: 'var(--text)',
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '460px',
+        background: 'var(--bg-2)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '2rem',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          width: '72px',
+          height: '72px',
+          borderRadius: '50%',
+          margin: '0 auto 1rem',
+          background: 'var(--amber-dim)',
+          color: 'var(--amber)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Moon size={30} />
+        </div>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+          Панель продавца закрыта
+        </h1>
+        <p style={{ color: 'var(--text-3)', lineHeight: 1.6, marginBottom: '1rem' }}>
+          Доступ продавца работает ежедневно с 09:00 до 00:00.
+          С 00:00 до 09:00 касса и панель продавца недоступны.
+        </p>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          background: 'var(--bg-3)',
+          border: '1px solid var(--border)',
+          borderRadius: '999px',
+          padding: '0.45rem 0.85rem',
+          fontSize: '0.82rem',
+          color: 'var(--text-2)',
+          marginBottom: '1.25rem',
+        }}>
+          <Lock size={14} />
+          Время работы: 09:00 - 00:00
+        </div>
+        <div>
+          <button onClick={logout} style={{
+            padding: '0.7rem 1.2rem',
+            background: 'var(--accent)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 'var(--radius)',
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontFamily: 'var(--font-display)',
+          }}>
+            Выйти
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

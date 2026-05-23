@@ -2,7 +2,7 @@ const express  = require('express');
 const { body } = require('express-validator');
 const router   = express.Router();
 const controller = require('../controllers/auth.controller');
-const { authenticate, authorize } = require('../middleware/auth.middleware');
+const { authenticate, authorize, enforceSellerHours } = require('../middleware/auth.middleware');
 const { validate } = require('../middleware/validate.middleware');
 
 // ── Public ────────────────────────────────────────────────────────────────────
@@ -38,15 +38,15 @@ router.post('/register', authenticate, authorize('ADMIN'), [
 ], controller.register);
 
 // ── Authenticated ─────────────────────────────────────────────────────────────
-router.get('/profile', authenticate, controller.getProfile);
+router.get('/profile', authenticate, enforceSellerHours, controller.getProfile);
 
 // WebAuthn registration (requires JWT — must be logged in first or admin registers for seller)
-router.post('/webauthn/register/start',  authenticate, controller.webAuthnRegisterStart);
-router.post('/webauthn/register/finish', authenticate, [
+router.post('/webauthn/register/start',  authenticate, enforceSellerHours, controller.webAuthnRegisterStart);
+router.post('/webauthn/register/finish', authenticate, enforceSellerHours, [
   body('response').notEmpty(), validate,
 ], controller.webAuthnRegisterFinish);
 
-router.delete('/webauthn/credentials/:credentialId', authenticate, controller.deleteCredential);
+router.delete('/webauthn/credentials/:credentialId', authenticate, enforceSellerHours, controller.deleteCredential);
 
 // ── Admin: user management ────────────────────────────────────────────────────
 router.get('/users',       authenticate, authorize('ADMIN'), controller.listUsers);

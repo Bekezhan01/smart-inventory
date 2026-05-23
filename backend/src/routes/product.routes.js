@@ -2,13 +2,13 @@ const express = require('express');
 const { body } = require('express-validator');
 const router  = express.Router();
 const controller = require('../controllers/product.controller');
-const { authenticate, authorize } = require('../middleware/auth.middleware');
+const { authenticate, authorize, enforceSellerHours } = require('../middleware/auth.middleware');
 const { validate } = require('../middleware/validate.middleware');
 
 router.use(authenticate);
 
-router.get('/',    authorize('ADMIN', 'OPERATOR', 'SELLER'), controller.getAll);
-router.get('/:id', authorize('ADMIN', 'OPERATOR', 'SELLER'), controller.getById);
+router.get('/',    authorize('ADMIN', 'OPERATOR', 'SELLER'), enforceSellerHours, controller.getAll);
+router.get('/:id', authorize('ADMIN', 'OPERATOR', 'SELLER'), enforceSellerHours, controller.getById);
 
 router.post('/', authorize('ADMIN', 'OPERATOR'), [
   body('name').trim().notEmpty(),
