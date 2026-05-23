@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, Warehouse, ArrowLeftRight,
-  BarChart3, LogOut, BoxSelect, ChevronRight, Users, ShieldCheck,
+  BarChart3, LogOut, ChevronRight, Users, ShieldCheck,
 } from 'lucide-react';
 import useAuthStore from '../../context/authStore';
 import toast from 'react-hot-toast';
@@ -32,10 +32,8 @@ export default function AdminLayout() {
     <div className={styles.root}>
       <aside className={styles.sidebar}>
         <div className={styles.logo}>
-          <BoxSelect size={22} color="var(--accent)" />
-          <span>StockOS</span>
           <span style={{
-            marginLeft: 'auto', fontSize: '0.65rem', fontFamily: 'var(--font-mono)',
+            fontSize: '0.65rem', fontFamily: 'var(--font-mono)',
             background: 'var(--accent-dim)', color: 'var(--accent-2)',
             padding: '2px 6px', borderRadius: '4px', fontWeight: 600,
           }}>ADMIN</span>

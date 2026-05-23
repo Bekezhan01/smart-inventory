@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BoxSelect, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import useAuthStore from '../../context/authStore';
 import toast from 'react-hot-toast';
 import { t } from '../../i18n';
@@ -32,16 +32,6 @@ export default function LoginPage() {
       <div style={{ width: '100%', maxWidth: '420px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '10px',
-            background: 'var(--accent-dim)', border: '1px solid var(--border)',
-            borderRadius: '14px', padding: '12px 20px', marginBottom: '1rem',
-          }}>
-            <BoxSelect size={24} color="var(--accent-2)" />
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text)' }}>
-              StockOS
-            </span>
-          </div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 700, marginBottom: '6px' }}>
             {t.auth.title}
           </h1>

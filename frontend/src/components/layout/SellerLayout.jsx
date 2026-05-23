@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingCart, LayoutDashboard, Settings, LogOut, BoxSelect, ChevronRight } from 'lucide-react';
+import { ShoppingCart, LayoutDashboard, Settings, LogOut, ChevronRight } from 'lucide-react';
 import useAuthStore from '../../context/authStore';
 import toast from 'react-hot-toast';
 import { t } from '../../i18n';
@@ -25,10 +25,8 @@ export default function SellerLayout() {
     <div className={styles.root}>
       <aside className={styles.sidebar}>
         <div className={styles.logo}>
-          <BoxSelect size={22} color="var(--amber)" />
-          <span>StockOS</span>
           <span style={{
-            marginLeft: 'auto', fontSize: '0.65rem', fontFamily: 'var(--font-mono)',
+            fontSize: '0.65rem', fontFamily: 'var(--font-mono)',
             background: 'var(--amber-dim)', color: 'var(--amber)',
             padding: '2px 6px', borderRadius: '4px', fontWeight: 600,
           }}>POS</span>

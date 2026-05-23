@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, Warehouse, ArrowLeftRight,
-  BarChart3, LogOut, BoxSelect, ChevronRight,
+  BarChart3, LogOut, ChevronRight,
 } from 'lucide-react';
 import useAuthStore from '../../context/authStore';
 import toast from 'react-hot-toast';
@@ -31,10 +31,7 @@ export default function Layout() {
   return (
     <div className={styles.root}>
       <aside className={styles.sidebar}>
-        <div className={styles.logo}>
-          <BoxSelect size={22} color="var(--accent)" />
-          <span>StockOS</span>
-        </div>
+        <div className={styles.logo} />
 
         <nav className={styles.nav}>
           {NAV.map(({ to, icon: Icon, label }) => (

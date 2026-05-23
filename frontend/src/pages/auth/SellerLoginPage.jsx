@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BoxSelect, Fingerprint, KeyRound, ArrowLeft, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Fingerprint, KeyRound, ArrowLeft, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import useAuthStore from '../../context/authStore';
 import toast from 'react-hot-toast';
 import { t } from '../../i18n';
@@ -69,16 +69,6 @@ export default function SellerLoginPage() {
       <div style={{ width: '100%', maxWidth: '400px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '10px',
-            background: 'var(--green-dim)', border: '1px solid var(--green)',
-            borderRadius: '14px', padding: '12px 20px', marginBottom: '1rem',
-          }}>
-            <BoxSelect size={24} color="var(--green)" />
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text)' }}>
-              StockOS
-            </span>
-          </div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 700, marginBottom: '4px' }}>
             {t.auth.sellerTitle}
           </h1>
