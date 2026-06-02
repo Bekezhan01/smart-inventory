@@ -113,8 +113,33 @@ const update = async (id, data) => {
 };
 
 const remove = async (id) => {
-  await getById(id);
-  await prisma.product.delete({ where: { id } });
+  const product = await getById(id);
+
+  const [transactionsCount, saleItemsCount] = await Promise.all([
+    prisma.transaction.count({ where: { productId: id } }),
+    prisma.saleItem.count({ where: { productId: id } }),
+  ]);
+
+  const hasHistory = transactionsCount > 0 || saleItemsCount > 0;
+
+  if (!hasHistory) {
+    await prisma.product.delete({ where: { id } });
+    return { mode: 'deleted', productId: id };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.product.update({
+      where: { id },
+      data: { isActive: false },
+    });
+
+    await tx.inventory.updateMany({
+      where: { productId: id },
+      data: { quantity: 0 },
+    });
+  });
+
+  return { mode: 'archived', productId: product.id };
 };
 
 module.exports = { getAll, getById, create, update, remove };

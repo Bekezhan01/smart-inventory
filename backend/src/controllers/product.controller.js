@@ -38,8 +38,13 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    await productService.remove(req.params.id);
-    res.json({ message: 'Product deleted' });
+    const result = await productService.remove(req.params.id);
+    res.json({
+      message: result.mode === 'archived'
+        ? 'Товар уже использовался в системе и был архивирован'
+        : 'Товар удалён',
+      mode: result.mode,
+    });
   } catch (err) {
     next(err);
   }

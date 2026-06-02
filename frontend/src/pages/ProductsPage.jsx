@@ -28,7 +28,7 @@ export default function ProductsPage() {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get('/products', { params: { search, page, limit: 15 } });
+      const res = await api.get('/products', { params: { search, page, limit: 15, isActive: 'true' } });
       setProducts(res.data.products);
       setPagination(res.data.pagination);
     } finally {
@@ -84,8 +84,8 @@ export default function ProductsPage() {
   const handleDelete = async (id) => {
     if (!confirm(t.products.deleteConfirm)) return;
     try {
-      await api.delete(`/products/${id}`);
-      toast.success(t.products.deleted);
+      const res = await api.delete(`/products/${id}`);
+      toast.success(res.data?.message || t.products.deleted);
       fetchProducts();
     } catch (err) {
       toast.error(err.response?.data?.message || t.products.deleteFailed);
