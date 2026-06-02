@@ -1,5 +1,19 @@
 const prisma = require('../config/database');
 
+const normalizeOptionalString = (value) => {
+  if (value === undefined || value === null) return null;
+  const trimmed = String(value).trim();
+  return trimmed === '' ? null : trimmed;
+};
+
+const normalizeRequiredString = (value) => String(value || '').trim();
+
+const normalizeNumber = (value, fallback = 0) => {
+  if (value === undefined || value === null || value === '') return fallback;
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? fallback : parsed;
+};
+
 const getAll = async ({ search, categoryId, page = 1, limit = 20, isActive }) => {
   const skip = (page - 1) * limit;
   const where = {};
@@ -48,33 +62,35 @@ const getById = async (id) => {
 };
 
 const create = async (data) => {
-  const product = await prisma.product.create({
-    data: {
-      name: data.name,
-      sku: data.sku,
-      barcode: data.barcode,
-      price: data.price,
-      categoryId: data.categoryId,
-      description: data.description,
-      imageUrl: data.imageUrl,
-    },
-    include: { category: true },
-  });
+  const productData = {
+    name: normalizeRequiredString(data.name),
+    sku: normalizeRequiredString(data.sku),
+    barcode: normalizeOptionalString(data.barcode),
+    price: normalizeNumber(data.price, 0),
+    categoryId: normalizeOptionalString(data.categoryId),
+    description: normalizeOptionalString(data.description),
+    imageUrl: normalizeOptionalString(data.imageUrl),
+  };
 
-  // Auto-create inventory record
-  await prisma.inventory.create({
-    data: {
-      productId: product.id,
-      quantity: data.initialQuantity || 0,
-      minStock: data.minStock || 0,
-      maxStock: data.maxStock || 1000,
-      location: data.location,
-    },
-  });
+  return prisma.$transaction(async (tx) => {
+    const product = await tx.product.create({
+      data: productData,
+    });
 
-  return prisma.product.findUnique({
-    where: { id: product.id },
-    include: { category: true, inventory: true },
+    await tx.inventory.create({
+      data: {
+        productId: product.id,
+        quantity: normalizeNumber(data.initialQuantity, 0),
+        minStock: normalizeNumber(data.minStock, 0),
+        maxStock: normalizeNumber(data.maxStock, 1000),
+        location: normalizeOptionalString(data.location),
+      },
+    });
+
+    return tx.product.findUnique({
+      where: { id: product.id },
+      include: { category: true, inventory: true },
+    });
   });
 };
 
@@ -83,13 +99,13 @@ const update = async (id, data) => {
   return prisma.product.update({
     where: { id },
     data: {
-      name: data.name,
-      sku: data.sku,
-      barcode: data.barcode,
-      price: data.price,
-      categoryId: data.categoryId,
-      description: data.description,
-      imageUrl: data.imageUrl,
+      name: data.name === undefined ? undefined : normalizeRequiredString(data.name),
+      sku: data.sku === undefined ? undefined : normalizeRequiredString(data.sku),
+      barcode: data.barcode === undefined ? undefined : normalizeOptionalString(data.barcode),
+      price: data.price === undefined ? undefined : normalizeNumber(data.price, 0),
+      categoryId: data.categoryId === undefined ? undefined : normalizeOptionalString(data.categoryId),
+      description: data.description === undefined ? undefined : normalizeOptionalString(data.description),
+      imageUrl: data.imageUrl === undefined ? undefined : normalizeOptionalString(data.imageUrl),
       isActive: data.isActive,
     },
     include: { category: true, inventory: true },
