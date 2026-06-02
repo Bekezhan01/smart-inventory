@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { t } from '../../i18n';
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: 'admin@stockos.com', password: 'admin123' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [showPw, setShowPw] = useState(false);
   const { login, loading } = useAuthStore();
   const navigate = useNavigate();
@@ -87,14 +87,6 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div style={{
-          marginTop: '0.75rem', background: 'var(--bg-3)', border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)', padding: '0.75rem 1rem',
-          fontSize: '0.78rem', color: 'var(--text-3)', fontFamily: 'var(--font-mono)', lineHeight: 1.8,
-        }}>
-          <div>Admin: admin@stockos.com / admin123</div>
-          <div>Operator: operator@stockos.com / operator123</div>
-        </div>
       </div>
     </div>
   );

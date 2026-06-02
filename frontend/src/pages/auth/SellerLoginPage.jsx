@@ -8,7 +8,7 @@ import { t } from '../../i18n';
 const MODE = { FACE: 'face', PIN: 'pin' };
 
 export default function SellerLoginPage() {
-  const [email, setEmail]     = useState('seller@stockos.com');
+  const [email, setEmail]     = useState('');
   const [pin, setPin]         = useState('');
   const [mode, setMode]       = useState(MODE.FACE);
   const [faceState, setFaceState] = useState('idle'); // idle | scanning | success | error
@@ -221,14 +221,6 @@ export default function SellerLoginPage() {
           </Link>
         </div>
 
-        <div style={{
-          marginTop: '0.75rem', background: 'var(--bg-3)', border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)', padding: '0.75rem 1rem',
-          fontSize: '0.78rem', color: 'var(--text-3)', fontFamily: 'var(--font-mono)', lineHeight: 1.8,
-        }}>
-          <div>Продавец: seller@stockos.com / PIN: 1234</div>
-          <div style={{ color: 'var(--text-3)', fontSize: '0.72rem' }}>Face ID: нужен HTTPS и поддержка WebAuthn</div>
-        </div>
       </div>
     </div>
   );
