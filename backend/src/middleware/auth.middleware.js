@@ -4,9 +4,19 @@ const auditService = require('../services/audit.service');
 
 const SELLER_ACCESS_START_HOUR = 9;
 const SELLER_ACCESS_END_HOUR = 24;
+const SELLER_TIMEZONE = process.env.SELLER_TIMEZONE || process.env.TZ || 'Asia/Aqtau';
+
+const getSellerHour = (date = new Date()) => {
+  const formatter = new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit',
+    hour12: false,
+    timeZone: SELLER_TIMEZONE,
+  });
+  return Number(formatter.format(date));
+};
 
 const isSellerAccessOpen = (date = new Date()) => {
-  const hour = date.getHours();
+  const hour = getSellerHour(date);
   return hour >= SELLER_ACCESS_START_HOUR && hour < SELLER_ACCESS_END_HOUR;
 };
 
@@ -82,7 +92,8 @@ const enforceSellerHours = async (req, res, next) => {
     metadata: {
       availableFrom: '09:00',
       availableUntil: '00:00',
-      serverHour: new Date().getHours(),
+      localHour: getSellerHour(),
+      timeZone: SELLER_TIMEZONE,
     },
   });
 
